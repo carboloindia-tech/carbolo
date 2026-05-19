@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#050507">
+<title>Carbolo — AI-Powered Dealership OS</title>
+<meta name="description" content="Two products. One brain. One platform — for the Indian car dealership.">
+<meta property="og:title" content="Carbolo — AI-Powered Dealership OS">
+<meta property="og:description" content="The salesperson that never sleeps, never forgets, and never hallucinates a feature.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="carbolo-cover.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  /* canvas — deep, slightly cool black */
+  --bg: #050507;
+  --bg-soft: #0a0a0e;
+  --bg-elev: #0e0e14;
+  --line: rgba(255, 255, 255, 0.06);
+  --line-2: rgba(255, 255, 255, 0.12);
+  --line-3: rgba(255, 255, 255, 0.22);
+
+  /* type */
+  --text: #ECECF0;
+  --text-soft: #9090A0;
+  --text-mute: #5A5A66;
+  --text-faint: #2E2E36;
+
+  /* brand — tuned to the logo's actual color story */
+  --blue: #4FB3FF;       /* circuit traces */
+  --blue-deep: #2E9BFF;
+  --violet: #8B5CF6;     /* mid wordmark */
+  --violet-deep: #7C4DFF; /* "bolo" terminal */
+  --violet-light: #B388FF;
+  --grad: linear-gradient(105deg, #4FB3FF 0%, #8B5CF6 55%, #7C4DFF 100%);
+  --grad-soft: linear-gradient(105deg, rgba(79,179,255,0.18) 0%, rgba(139,92,246,0.18) 55%, rgba(124,77,255,0.18) 100%);
+
+  /* glow stops */
+  --glow-blue: rgba(79, 179, 255, 0.35);
+  --glow-violet: rgba(139, 92, 246, 0.35);
+
+  /* system */
+  --max: 1100px;
+  --gutter: clamp(20px, 5vw, 48px);
+  --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-serif: 'Instrument Serif', Georgia, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.6;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  position: relative;
+}
+::selection { background: var(--violet-deep); color: #fff; }
+
+/* ============================================================
+   ATMOSPHERIC BACKDROP — layered radial gradients
+   + a faint circuit-board grid texture for depth
+   ============================================================ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 12% 6%, rgba(79, 179, 255, 0.10), transparent 38%),
+    radial-gradient(circle at 88% 92%, rgba(139, 92, 246, 0.10), transparent 42%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.012), transparent 60%);
+}
+body::after {
+  /* faint circuit-board grid — almost invisible, gives the page texture */
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.018) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+nav.top {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(5, 5, 7, 0.72);
+  backdrop-filter: saturate(160%) blur(18px);
+  -webkit-backdrop-filter: saturate(160%) blur(18px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-in {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 14px var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+.brand-logo {
+  display: block;
+  width: 180px;
+  height: 50px;
+  background-image: url('carbolo-logo.png');
+  background-size: 230px auto;     /* zoom into the logo's middle band */
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.15));
+}
+.nav-meta {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+.nav-status {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nav-status .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--blue);
+  box-shadow: 0 0 10px var(--blue);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.nav-cta {
+  font-size: 13px;
+  color: var(--text);
+  text-decoration: none;
+  padding: 8px 16px;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  transition: all 240ms ease;
+  letter-spacing: -0.005em;
+  position: relative;
+  overflow: hidden;
+}
+.nav-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--grad-soft);
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+.nav-cta:hover {
+  border-color: var(--line-3);
+}
+.nav-cta:hover::before { opacity: 1; }
+.nav-cta span { position: relative; }
+@media (max-width: 560px) {
+  .nav-status { display: none; }
+}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+main { position: relative; z-index: 1; padding-top: 60px; }
+section { padding: 0 var(--gutter); }
+.inner { max-width: var(--max); margin: 0 auto; }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  min-height: 94vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 0;
+  overflow: hidden;
+}
+.hero .inner {
+  width: 100%;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: clamp(48px, 8vh, 88px) var(--gutter) clamp(40px, 6vh, 60px);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+/* the signature animated light sweep — runs once on page load,
+   horizontal beam that echoes the speed lines on the car */
+.hero-sweep {
+  position: absolute;
+  top: 38%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right,
+    transparent 0%,
+    transparent 40%,
+    rgba(79, 179, 255, 0.9) 48%,
+    rgba(139, 92, 246, 0.9) 52%,
+    transparent 60%,
+    transparent 100%);
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+  animation: sweep 2.8s cubic-bezier(0.22, 1, 0.36, 1) 0.5s 1 forwards;
+}
+.hero-sweep::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(to right,
+    transparent 40%,
+    rgba(79, 179, 255, 0.5) 48%,
+    rgba(139, 92, 246, 0.5) 52%,
+    transparent 60%);
+  filter: blur(3px);
+}
+@keyframes sweep {
+  0%   { transform: translateX(-100%); opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+/* circuit-trace decoration — the logo's signature, expanded
+   into the hero's right-side negative space, very subtle */
+.hero-circuit {
+  position: absolute;
+  top: 22%;
+  right: 0;
+  width: clamp(180px, 22vw, 320px);
+  height: auto;
+  opacity: 0.45;
+  z-index: 1;
+  pointer-events: none;
+}
+@media (max-width: 900px) {
+  .hero-circuit { display: none; }
+}
+
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  margin-bottom: 40px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.hero-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 28px;
+  height: 1px;
+  background: var(--grad);
+  opacity: 0.9;
+  position: relative;
+}
+.hero-eyebrow::after {
+  content: '';
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--blue);
+  box-shadow: 0 0 10px var(--blue);
+  margin-left: -8px;
+}
+.hero h1 {
+  font-size: clamp(44px, 8.4vw, 104px);
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+  font-weight: 500;
+  margin-bottom: 40px;
+  max-width: 13ch;
+  position: relative;
+}
+.hero h1 em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+.hero h1 .grad {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 40px rgba(139, 92, 246, 0.25);
+}
+.hero-lead {
+  font-size: clamp(17px, 1.7vw, 19px);
+  color: var(--text-soft);
+  max-width: 540px;
+  margin-bottom: 48px;
+  line-height: 1.55;
+  letter-spacing: -0.005em;
+}
+.hero-lead em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--text);
+}
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* CTA — primary, with gradient rim glow that matches the car's edge lighting */
+.cta-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 24px;
+  background: var(--text);
+  color: var(--bg);
+  text-decoration: none;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  transition: transform 240ms ease, box-shadow 320ms ease;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+    0 12px 40px -10px var(--glow-violet),
+    0 4px 20px -5px var(--glow-blue);
+}
+.cta-primary:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.15) inset,
+    0 20px 55px -10px var(--glow-violet),
+    0 10px 30px -5px var(--glow-blue);
+}
+.cta-primary .arrow {
+  display: inline-block;
+  transition: transform 240ms ease;
+}
+.cta-primary:hover .arrow { transform: translateX(4px); }
+.cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px;
+  color: var(--text-soft);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 220ms ease;
+}
+.cta-secondary:hover { color: var(--text); }
+
+/* hero car cover — full-bleed cinematic bottom */
+.hero-car {
+  width: 100%;
+  display: block;
+  position: relative;
+  overflow: hidden;
+  line-height: 0;
+  z-index: 1;
+}
+.hero-car img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+/* top edge fade so the image emerges from the page, not pasted */
+.hero-car::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom, var(--bg) 0%, transparent 25%, transparent 80%, var(--bg) 100%);
+}
+
+/* ============================================================
+   SECTION SHELL
+   ============================================================ */
+.section-block {
+  padding: clamp(90px, 14vh, 160px) var(--gutter);
+  position: relative;
+}
+.section-head { margin-bottom: 56px; position: relative; }
+.section-idx {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+/* circuit-trace lead-in echoing the logo's left side */
+.section-idx::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--blue);
+  box-shadow: 0 0 10px var(--blue);
+  flex-shrink: 0;
+}
+.section-idx::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, var(--line-2), transparent);
+  max-width: 240px;
+}
+.section-title {
+  font-size: clamp(34px, 5.4vw, 64px);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  font-weight: 500;
+  max-width: 16ch;
+}
+.section-title em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+}
+.section-title .grad {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.section-lede {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(20px, 2.4vw, 28px);
+  color: var(--text-soft);
+  margin-bottom: 64px;
+  max-width: 36ch;
+  letter-spacing: -0.005em;
+  line-height: 1.4;
+}
+
+/* ============================================================
+   LEAK SECTION
+   ============================================================ */
+.leaks {
+  display: flex;
+  flex-direction: column;
+}
+.leak {
+  padding: 44px 0;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 32px;
+  position: relative;
+  transition: background 320ms ease;
+}
+.leak:last-child { border-bottom: 1px solid var(--line); }
+.leak:hover { background: rgba(255, 255, 255, 0.015); }
+.leak-num {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-faint);
+  letter-spacing: 0.05em;
+  padding-top: 8px;
+  position: relative;
+}
+.leak-num .arrow {
+  display: block;
+  margin-top: 8px;
+  color: var(--text-mute);
+  font-size: 14px;
+}
+.leak-body h3 {
+  font-size: clamp(22px, 2.6vw, 30px);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  margin-bottom: 14px;
+}
+.leak-body .pain {
+  color: var(--text-soft);
+  margin-bottom: 24px;
+  max-width: 580px;
+  line-height: 1.55;
+}
+.leak-body .answer {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(16px, 1.6vw, 18px);
+  color: var(--text);
+  max-width: 580px;
+  padding-left: 18px;
+  border-left: 2px solid;
+  border-image: var(--grad) 1;
+  line-height: 1.45;
+  position: relative;
+}
+/* small glow at the top of the gradient bar — like a circuit terminal */
+.leak-body .answer::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--blue);
+  box-shadow: 0 0 10px var(--blue);
+}
+@media (max-width: 600px) {
+  .leak { grid-template-columns: 50px 1fr; gap: 20px; padding: 36px 0; }
+}
+
+/* ============================================================
+   BUILD SECTION — product cards with rim-lighting glow
+   ============================================================ */
+.build-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+}
+/* faint glow halo around the entire grid — like edge lighting */
+.build-grid::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 14px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(79,179,255,0.20), transparent 40%, transparent 60%, rgba(139,92,246,0.20));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.build-card {
+  background: var(--bg-soft);
+  padding: 44px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  transition: background 360ms ease;
+}
+.build-card:hover { background: var(--bg-elev); }
+/* on-hover internal glow that intensifies one corner */
+.build-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 420ms ease;
+}
+.build-card.b1::after {
+  background: radial-gradient(ellipse at top left, rgba(79, 179, 255, 0.10), transparent 55%);
+}
+.build-card.b2::after {
+  background: radial-gradient(ellipse at top right, rgba(139, 92, 246, 0.10), transparent 55%);
+}
+.build-card:hover::after { opacity: 1; }
+.build-card .tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  width: fit-content;
+  position: relative;
+  z-index: 1;
+}
+.build-card .tag .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+}
+.build-card.b1 .tag { color: var(--blue); }
+.build-card.b1 .tag .dot {
+  background: var(--blue);
+  box-shadow: 0 0 10px var(--blue);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+.build-card.b2 .tag { color: var(--violet-light); }
+.build-card.b2 .tag .dot {
+  background: var(--violet-light);
+  box-shadow: 0 0 10px var(--violet-light);
+}
+.build-card h3 {
+  font-size: clamp(26px, 3.2vw, 36px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  position: relative;
+  z-index: 1;
+}
+.build-card h3 em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+}
+.build-card .desc {
+  color: var(--text-soft);
+  line-height: 1.55;
+  max-width: 44ch;
+  position: relative;
+  z-index: 1;
+}
+.build-card .desc em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--text);
+}
+.build-card .channels {
+  margin-top: auto;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-mute);
+  letter-spacing: 0.04em;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+.build-card .channels span:not(:last-child)::after {
+  content: ' ·';
+  color: var(--text-faint);
+  margin-left: 4px;
+}
+@media (max-width: 760px) {
+  .build-grid { grid-template-columns: 1fr; }
+  .build-card { padding: 36px 28px; }
+}
+
+/* ============================================================
+   NUMBERS — with subtle speed-line backdrop echoing the car
+   ============================================================ */
+.numbers-wrap {
+  position: relative;
+}
+.numbers-wrap::before {
+  /* faint horizontal speed lines as backdrop motif */
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, transparent 0%, rgba(79,179,255,0.04) 30%, rgba(139,92,246,0.04) 70%, transparent 100%);
+  background-size: 100% 1px;
+  background-repeat: no-repeat;
+  background-position: 0 25%, 0 50%, 0 75%;
+  opacity: 0.5;
+}
+.numbers { border-top: 1px solid var(--line); position: relative; }
+.num-row {
+  display: grid;
+  grid-template-columns: 320px 1fr 1fr;
+  gap: 40px;
+  padding: 44px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: baseline;
+  position: relative;
+  transition: background 320ms ease;
+}
+.num-row:hover { background: rgba(255, 255, 255, 0.012); }
+/* gradient accent that appears on the left edge on hover */
+.num-row::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  background: var(--grad);
+  border-radius: 2px;
+  transition: height 360ms cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 12px var(--glow-violet);
+}
+.num-row:hover::before { height: 60%; }
+.num-figure {
+  font-size: clamp(60px, 9.5vw, 116px);
+  font-weight: 400;
+  letter-spacing: -0.05em;
+  line-height: 0.88;
+  font-feature-settings: 'tnum' on;
+}
+.num-figure .grad {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 60px rgba(139, 92, 246, 0.2);
+}
+.num-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.num-note {
+  font-size: 14px;
+  color: var(--text-mute);
+  line-height: 1.55;
+  max-width: 280px;
+}
+.num-note em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--text-soft);
+}
+@media (max-width: 760px) {
+  .num-row { grid-template-columns: 1fr; gap: 12px; padding: 36px 0; }
+  .num-figure { font-size: clamp(56px, 18vw, 92px); }
+}
+
+/* ============================================================
+   CLOSING — atmospheric violet glow, brand statement
+   ============================================================ */
+.closing {
+  padding: clamp(120px, 22vh, 220px) var(--gutter) clamp(80px, 12vh, 140px);
+  position: relative;
+  overflow: hidden;
+}
+.closing::before {
+  /* faint atmospheric glow rising from below — brand color terminal */
+  content: '';
+  position: absolute;
+  bottom: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80vw;
+  height: 400px;
+  background: radial-gradient(ellipse at center, rgba(139, 92, 246, 0.18), transparent 60%);
+  pointer-events: none;
+  filter: blur(20px);
+}
+.closing .inner { position: relative; z-index: 1; }
+.closing-quote {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(32px, 5.8vw, 72px);
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  max-width: 18ch;
+  margin-bottom: 56px;
+  font-weight: 400;
+}
+.closing-quote .grad {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 50px rgba(139, 92, 246, 0.3);
+}
+.closing-actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.closing-meta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-mute);
+  letter-spacing: 0.04em;
+}
+.closing-meta a {
+  color: var(--text-soft);
+  text-decoration: none;
+  transition: color 220ms ease;
+}
+.closing-meta a:hover { color: var(--text); }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer {
+  border-top: 1px solid var(--line);
+  padding: 28px var(--gutter);
+  position: relative;
+  z-index: 1;
+  background: var(--bg);
+}
+.foot-in {
+  max-width: var(--max);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-mute);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.foot-in a {
+  color: var(--text-mute);
+  text-decoration: none;
+  transition: color 220ms ease;
+}
+.foot-in a:hover { color: var(--text); }
+.foot-mark {
+  display: inline-block;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--blue);
+  box-shadow: 0 0 8px var(--blue);
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* ============================================================
+   REVEAL
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 900ms cubic-bezier(0.16, 1, 0.3, 1), transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.in { opacity: 1; transform: translateY(0); }
+.reveal[data-delay="1"] { transition-delay: 80ms; }
+.reveal[data-delay="2"] { transition-delay: 160ms; }
+.reveal[data-delay="3"] { transition-delay: 240ms; }
+.reveal[data-delay="4"] { transition-delay: 320ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+  .hero-sweep { display: none; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="top">
+  <div class="nav-in">
+    <a class="brand" href="#top" aria-label="Carbolo home">
+      <span class="brand-logo" role="img" aria-label="Carbolo"></span>
+    </a>
+    <div class="nav-meta">
+      <div class="nav-status"><span class="dot"></span> Pilot · 2026</div>
+      <a class="nav-cta" href="#contact"><span>Talk to founders</span></a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <!-- one-pass light sweep across the screen on load -->
+    <div class="hero-sweep" aria-hidden="true"></div>
+
+    <!-- circuit-trace decoration, right-side negative space -->
+    <svg class="hero-circuit" viewBox="0 0 320 240" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="trace-grad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#4FB3FF" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0.05"/>
+        </linearGradient>
+      </defs>
+      <g stroke="url(#trace-grad)" stroke-width="1" fill="none">
+        <path d="M 320 60 L 240 60 L 220 80 L 140 80"/>
+        <path d="M 320 110 L 200 110 L 180 130 L 100 130"/>
+        <path d="M 320 160 L 260 160 L 240 180 L 160 180"/>
+        <path d="M 320 200 L 220 200"/>
+      </g>
+      <g fill="#4FB3FF">
+        <circle cx="140" cy="80" r="2.5" opacity="0.9"/>
+        <circle cx="100" cy="130" r="2.5" opacity="0.7"/>
+        <circle cx="160" cy="180" r="2.5" opacity="0.5"/>
+        <circle cx="220" cy="200" r="2.5" opacity="0.4"/>
+      </g>
+    </svg>
+
+    <div class="inner">
+      <div class="hero-eyebrow reveal">AI-Powered Dealership OS · Built in India</div>
+      <h1 class="reveal" data-delay="1">
+        We don't sell<br>
+        <em>software.</em><br>
+        We sell <span class="grad">conversion.</span>
+      </h1>
+      <p class="hero-lead reveal" data-delay="2">
+        Two products. One brain. One platform — for the salespeople, the showrooms, and the dealers who'd rather make a <em>dent in their conversion rate</em> than buy another CRM.
+      </p>
+      <div class="hero-actions reveal" data-delay="3">
+        <a class="cta-primary" href="#contact">
+          Talk to a founder
+          <span class="arrow">→</span>
+        </a>
+        <a class="cta-secondary" href="#leak">See why ↓</a>
+      </div>
+    </div>
+
+    <div class="hero-car" aria-hidden="true">
+      <img src="carbolo-cover.jpg" alt="" loading="eager"/>
+    </div>
+  </section>
+
+  <!-- ============ LEAK ============ -->
+  <section id="leak" class="section-block">
+    <div class="inner">
+      <div class="section-head reveal">
+        <div class="section-idx">01 — The leak</div>
+        <h2 class="section-title">Where dealerships <em>bleed money.</em></h2>
+      </div>
+      <p class="section-lede reveal">Three places. All preventable.</p>
+
+      <div class="leaks">
+        <article class="leak reveal">
+          <div class="leak-num">01<span class="arrow">↓</span></div>
+          <div class="leak-body">
+            <h3>Lead response is broken.</h3>
+            <p class="pain">Average WhatsApp and web reply takes two to six hours. By then the buyer has talked to three competitors. Roughly seventy percent of leads die in the first forty-eight.</p>
+            <p class="answer">We reply in under thirty seconds. Across every channel. Sunday at 11pm is just another shift.</p>
+          </div>
+        </article>
+
+        <article class="leak reveal">
+          <div class="leak-num">02<span class="arrow">↓</span></div>
+          <div class="leak-body">
+            <h3>Salesperson quality is wildly inconsistent.</h3>
+            <p class="pain">A new hire can't explain variant differences. Hallucinates features. Folds the moment they hear "Tata safer hai" or "EMI zyada hai". Top performers cannot be cloned.</p>
+            <p class="answer">One trained brain, fluent across every variant, every objection, every regional script — Hindi, English, Hinglish. It never forgets, and when uncertain, it escalates.</p>
+          </div>
+        </article>
+
+        <article class="leak reveal">
+          <div class="leak-num">03<span class="arrow">↓</span></div>
+          <div class="leak-body">
+            <h3>The showroom dies on Sundays.</h3>
+            <p class="pain">Customer walks in. No salesperson is free. They sit in the car alone, leave confused, never return. The most expensive square footage in retail, going to waste.</p>
+            <p class="answer">Every parked car becomes an interactive product experience. Voice-driven. Animated. Variant-locked. The Apple Store moment, in a Hyundai showroom.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BUILD ============ -->
+  <section class="section-block">
+    <div class="inner">
+      <div class="section-head reveal">
+        <div class="section-idx">02 — What we built</div>
+        <h2 class="section-title">Two products. <em>One brain.</em></h2>
+      </div>
+
+      <div class="build-grid reveal">
+        <article class="build-card b1">
+          <span class="tag"><span class="dot"></span> V1 · Digital Sales Agent · Live</span>
+          <h3>The salesperson that <em>never sleeps.</em></h3>
+          <p class="desc">AI that sells the moment a lead lands — qualifies budget and timeline, books test drives, runs follow-up cadences, handles objections in three languages, calculates EMIs, generates on-road quotations, negotiates discounts. And escalates to a human <em>the second things get human.</em></p>
+          <div class="channels">
+            <span>WhatsApp</span><span>Voice</span><span>Web</span><span>Instagram</span><span>Facebook</span>
+          </div>
+        </article>
+
+        <article class="build-card b2">
+          <span class="tag"><span class="dot"></span> V2 · Showroom AI · Pilot</span>
+          <h3>Every parked car, an <em>experience.</em></h3>
+          <p class="desc">A tablet at every vehicle. Voice-first. Variant-locked — the AI never explains a feature this car doesn't have. Idle demo mode plays when no one's around. The moment a customer asks about price, the AI hands off to a human closer with <em>full context.</em></p>
+          <div class="channels">
+            <span>Tablet</span><span>Voice</span><span>Animation</span><span>AR (next)</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NUMBERS ============ -->
+  <section class="section-block">
+    <div class="inner numbers-wrap">
+      <div class="section-head reveal">
+        <div class="section-idx">03 — The numbers we move</div>
+        <h2 class="section-title">Conversion, not seats. <em>Skin in the game.</em></h2>
+      </div>
+      <p class="section-lede reveal">We charge a percentage of incremental bookings — not a SaaS fee per user. If we don't move the needle, we don't get paid.</p>
+
+      <div class="numbers">
+        <div class="num-row reveal">
+          <div class="num-figure"><span class="grad">+30%</span></div>
+          <div class="num-label">Lead-to-sale lift</div>
+          <p class="num-note">Pilot target across the first sixty days. <em>Measured against the dealership's own baseline.</em></p>
+        </div>
+        <div class="num-row reveal">
+          <div class="num-figure"><span class="grad">&lt;30s</span></div>
+          <div class="num-label">Response time</div>
+          <p class="num-note">Across every channel. Every hour. <em>Including Sundays.</em></p>
+        </div>
+        <div class="num-row reveal">
+          <div class="num-figure"><span class="grad">100%</span></div>
+          <div class="num-label">Follow-up coverage</div>
+          <p class="num-note">Twenty-four hours. Three days. Two weeks. <em>No lead forgotten.</em></p>
+        </div>
+        <div class="num-row reveal">
+          <div class="num-figure"><span class="grad">&lt;0.1%</span></div>
+          <div class="num-label">Hallucination rate</div>
+          <p class="num-note">A variant-locked knowledge graph. <em>When uncertain, the AI escalates — it never invents.</em></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CLOSING ============ -->
+  <section id="contact" class="closing">
+    <div class="inner">
+      <p class="closing-quote reveal">
+        Built for dealers who'd rather make a <span class="grad">dent in their conversion rate</span> than buy another CRM.
+      </p>
+      <div class="closing-actions reveal" data-delay="1">
+        <a class="cta-primary" href="mailto:founders@carbolo.in">
+          Talk to a founder
+          <span class="arrow">→</span>
+        </a>
+        <p class="closing-meta"><a href="mailto:founders@carbolo.in">founders@carbolo.in</a> · we reply faster than your dealership</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="foot-in">
+    <span><span class="foot-mark"></span>Carbolo · 2026 · Bangalore</span>
+    <span>Founder-led · Pre-launch</span>
+    <a href="mailto:founders@carbolo.in">founders@carbolo.in</a>
+  </div>
+</footer>
+
+<script>
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    }
+  }, { rootMargin: '0px 0px -6% 0px', threshold: 0.04 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // hero reveals fire on load (above the fold)
+  window.addEventListener('load', () => {
+    document.querySelectorAll('.hero .reveal').forEach(el => el.classList.add('in'));
+  });
+</script>
+
+</body>
+</html>
